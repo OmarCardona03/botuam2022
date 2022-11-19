@@ -56,6 +56,79 @@ def on_command_menu(message):
     bot.send_message(message.chat.id, "Selecciona una opción del menú:",
         reply_markup=markup)      
 
+#IMC (Indice Masa Muscular)
+@bot.message_handler(commands=['imc'])
+def on_command_imc(message):
+    response = bot.reply_to(message, "¿Cuál es tu estatura en metros?")
+    bot.register_next_step_handler(response, process_height_step)
+
+#Recibe el valor de on_command_imc (estatura)
+def process_height_step(message):
+    try:
+        height = float(message.text) #estatura
+
+        record = Record()
+        record.height = height
+
+        bot_data[message.chat.id] = record
+
+        response = bot.reply_to(message, '¿Cuál es tu peso en kilogramos?')
+
+        bot.register_next_step_handler(response, process_weight_step)
+    except Exception as e:
+        bot.reply_to(message, f"Algo terrible sucedió: {e}")
+
+#recibe el valor de  process_height_step (peso)    
+def process_weight_step(message):
+    try:
+        weight = float(message.text)
+
+        record = bot_data[message.chat.id]
+        record.weight = weight
+
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+
+        markup.add('Male', 'Female')
+        response = bot.reply_to(message, '¿Cuál es tu género?',
+            reply_markup=markup)
+
+        bot.register_next_step_handler(response, process_gender_step)        
+    except Exception as e:
+        bot.reply_to(message, f"Algo terrible sucedió: {e}")   
+
+#recibe el valor de  process_gender_step (genero)      
+def process_gender_step(message):
+    gender = message.text
+
+    record = bot_data[message.chat.id]
+    record.gender = gender
+    
+    imc(message)     
+
+#Implementamos la funcion IMC
+def imc(message):
+    record = bot_data[message.chat.id]
+
+    imc = record.weight / pow(record.height, 2)
+
+    clasificacion = "";
+    if imc<18:
+        clasificacion = "Peso bajo";
+    elif imc>18 or imc<25:
+        clasificacion = "Normal";
+    elif imc>=25 or imc<30:
+        clasificacion = "Sobrepeso";           
+    elif imc>=30:
+        clasificacion = "Obesidad";
+    
+    answer = f"Data = (Height: {record.height}, Weight: {record.weight}, Gender:{record.gender})\nIMC = {imc}, clasificacion: {clasificacion}"
+    
+   
+
+
+
+    bot.reply_to(message, answer)
+
 #########################################################
 # Persistencia a Datos
 bot_data = {}
