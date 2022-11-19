@@ -3,6 +3,7 @@ from config import bot
 import config
 from time import sleep
 import re
+from telebot import types
 #########################################################
 # Aquí vendrá la implementación de la lógica del bot  
 #Comando: /start
@@ -14,8 +15,6 @@ def on_command_start(message):
         message.chat.id,
         "Hola, soy un \U0001F916, ¿cómo *estás*? \U0001F61C",
         parse_mode="Markdown")
-
-
 
 #Ayuda
 @bot.message_handler(commands=['help'])
@@ -35,7 +34,28 @@ def on_command_help(message):
     bot.send_message(
         message.chat.id,
         response,
-        parse_mode="Markdown")        
+        parse_mode="Markdown")    
+
+#Menu
+@bot.message_handler(commands=['menu'])
+def on_command_menu(message):
+    # Using the ReplyKeyboardMarkup class
+    # It's constructor can take the following optional arguments:
+    # - resize_keyboard: True/False (default False)
+    # - one_time_keyboard: True/False (default False)
+    # - selective: True/False (default False)
+    # - row_width: integer (default 3)
+    # row_width is used in combination with the add() function.
+    # It defines how many buttons are fit on each row before continuing on the next row.
+    markup = types.ReplyKeyboardMarkup(one_time_keyboard=True)
+    itembtn1 = types.KeyboardButton('/imc')
+    itembtn2 = types.KeyboardButton('/help')
+    
+    markup.add(itembtn1, itembtn2)
+
+    bot.send_message(message.chat.id, "Selecciona una opción del menú:",
+        reply_markup=markup)      
+
 #########################################################
 # Persistencia a Datos
 bot_data = {}
