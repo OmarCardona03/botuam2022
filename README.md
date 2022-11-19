@@ -1,6 +1,6 @@
 # Bot #2 de Maestria
 
-Esta es la segunda Practica de Bots. [Hecho en la Universidad Autonoma de Manizales.]{https://www.uautonoma.edu.co/}
+Esta es la segunda  `Practica de Bots `. [Hecho en la Universidad Autonoma de Manizales.](https://www.uautonoma.edu.co/)
 
 ## Desarrolladores
 
